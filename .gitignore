@@ -1,0 +1,7 @@
+.vs/
+FarseerProjectDesktop/FarseerProjectDesktop/bin/
+*.cache
+FarseerProjectDesktop/FarseerProjectDesktopContent/obj/
+*.tmp
+FarseerProjectDesktop/FarseerProjectDesktop/obj/
+*.cachefile

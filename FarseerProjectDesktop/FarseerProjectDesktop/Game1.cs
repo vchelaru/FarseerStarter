@@ -55,7 +55,7 @@ namespace FarseerProjectDesktop
 
 			CameraSetup.SetupCamera(SpriteManager.Camera, graphics);
 			GlobalContent.Initialize();
-			FlatRedBall.Screens.ScreenManager.Start(typeof(FarseerProjectDesktop.Screens.GameScreen));
+			FlatRedBall.Screens.ScreenManager.Start(typeof(FarseerProjectDesktop.Screens.StackingScreen));
 
             base.Initialize();
         }

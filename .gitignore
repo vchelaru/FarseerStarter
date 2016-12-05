@@ -5,3 +5,4 @@ FarseerProjectDesktop/FarseerProjectDesktopContent/obj/
 *.tmp
 FarseerProjectDesktop/FarseerProjectDesktop/obj/
 *.cachefile
+*.Generated.cs

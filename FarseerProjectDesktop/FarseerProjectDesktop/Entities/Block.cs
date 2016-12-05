@@ -18,6 +18,8 @@ using GuiManager = FlatRedBall.Gui.GuiManager;
 using FarseerPhysics.Dynamics;
 using FarseerPhysics.Factories;
 using Microsoft.Xna.Framework;
+using FarseerPhysics.Common;
+using FarseerPhysics.Collision.Shapes;
 
 #if FRB_XNA || SILVERLIGHT
 using Keys = Microsoft.Xna.Framework.Input.Keys;
@@ -44,16 +46,21 @@ namespace FarseerProjectDesktop.Entities
 
         public void CreateFarseerPhysics(World world)
         {
+
             physicsBody = BodyFactory.CreateRectangle(
-                world, SpriteInstance.Width, SpriteInstance.Height, 1, new Microsoft.Xna.Framework.Vector2(0, -12));
-            physicsBody.Restitution = .6f;
-            physicsBody.SleepingAllowed = true;
-            physicsBody.Friction = .5f;
+                world, SpriteInstance.Width, SpriteInstance.Height, 1);
+
+            // I'm not sure what "Restitution" means (not documented in Farseer .dll) but 
+            // having a nonzero value destabilizes stacking. With it at 0 (default) stacking works perfectly);
+            //physicsBody.Restitution = .6f;
+
+            physicsBody.Friction = 5f;
             physicsBody.BodyType = BodyType.Dynamic;
+            physicsBody.SleepingAllowed = true;
 
         }
 
-	    private void CustomActivity()
+        private void CustomActivity()
 	    {
 
 
@@ -81,11 +88,6 @@ namespace FarseerProjectDesktop.Entities
             this.X = physicsBody.Position.X;
             this.Y = physicsBody.Position.Y;
             this.RotationZ = physicsBody.Rotation;
-
-            if(physicsBody.LinearVelocity.Length() == 0)
-            {
-                int m = 3;
-            }
         }
     }
 }

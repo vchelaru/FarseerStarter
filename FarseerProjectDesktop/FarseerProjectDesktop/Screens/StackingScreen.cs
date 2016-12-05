@@ -21,64 +21,85 @@ using FlatRedBall.Localization;
 using Keys = Microsoft.Xna.Framework.Input.Keys;
 using Vector3 = Microsoft.Xna.Framework.Vector3;
 using Texture2D = Microsoft.Xna.Framework.Graphics.Texture2D;
-using FarseerPhysics.Dynamics;
 using Microsoft.Xna.Framework;
+using FarseerPhysics.Dynamics;
 
 namespace FarseerProjectDesktop.Screens
 {
-    public partial class GameScreen
-    {
+	public partial class StackingScreen
+	{
         World world;
 
         Body ground;
         void CustomInitialize()
-        {
+		{
+            Camera.Main.Y = 220;
+
             CreateFarseerWorld();
 
             CreateBlocks();
 
             CreateGround();
+
         }
 
         private void CreateFarseerWorld()
         {
-            float gravity = -100;
-            world = new World(new Vector2(0, gravity));
+            world = new World(Vector2.Zero);
+            world.Gravity = new Vector2(0f, -100);
+
         }
 
         private void CreateBlocks()
         {
+            // Note: Stacking works...somewhat.
+            // If heightAboveGround is 0, the blocks
+            // seem to stack and are perfectly stable.
+            // Setting heightAboveGround to a non-zero value
+            // destailizes the pyramid when it hits the ground.
+            // Setting the value up to a larger number like 100 causes
+            // it to squash quite a bit when it hits the ground, and it never
+            // stabilizes afterwards.
 
-            float startX = -80;
-            float startY = 0;
-            CreateBlocks(startX, startY);
+            float heightAboveGround = 0;
 
-            startX = -120;
-            startY = 30;
-            CreateBlocks(startX, startY);
+            int rowCount = 14;
+            float ySpacing = 32;
+            // start at the bottom:
+            for(int row = 0; row < rowCount; row++)
+            {
+                float xSpacing = 40;
+
+                int numberOfBlocks = rowCount - row;
+
+                float left = numberOfBlocks * -xSpacing/2.0f;
+
+                for(int i = 0; i < numberOfBlocks; i++)
+                {
+                    CreateBlockAt(left + i * xSpacing, heightAboveGround + row * ySpacing + 16);
+                }
+
+            }
 
         }
-
-        private void CreateBlocks(float startX, float startY)
+        
+        private void CreateBlockAt(float x, float y)
         {
-            int blockCount = 6;
-            for (int i = 0; i < blockCount; i++)
-            {
-                var block = new Entities.Block();
-                block.CreateFarseerPhysics(world);
+            var block = new Entities.Block();
+            block.CreateFarseerPhysics(world);
+            block.SetFarseerPosition(x, y);
 
-                block.SetFarseerPosition(startX + i * 15f, startY + i * 40);
-
-                BlockList.Add(block);
-            }
+            BlockList.Add(block);
         }
 
         private void CreateGround()
         {
+            var surfaceLevel = 0;
+
             var frbRectangle = new AxisAlignedRectangle();
             frbRectangle.Width = 700;
             frbRectangle.Height = 13;
-            frbRectangle.Y = -200;
+            frbRectangle.Y = -surfaceLevel - frbRectangle.Height / 2.0f; 
             frbRectangle.Visible = true;
 
             ground = FarseerPhysics.Factories.BodyFactory.CreateRectangle(
@@ -87,29 +108,31 @@ namespace FarseerProjectDesktop.Screens
             ground.Restitution = .7f;
             ground.SleepingAllowed = true;
             ground.IsStatic = true;
-            ground.Friction = .5f;
-
+            ground.Friction = 5f;
         }
 
         void CustomActivity(bool firstTimeCalled)
-	    {
+		{
             world.Step(TimeManager.SecondDifference);
 
             foreach (var block in BlockList)
             {
                 block.UpdateToFarseer();
             }
+
         }
 
-	    void CustomDestroy()
-	    {
+		void CustomDestroy()
+		{
 
-	    }
+
+		}
 
         static void CustomLoadStaticContent(string contentManagerName)
         {
 
+
         }
 
-    }
+	}
 }
